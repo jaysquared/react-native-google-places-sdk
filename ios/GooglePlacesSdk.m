@@ -11,6 +11,12 @@ RCT_EXTERN_METHOD(fetchPlaceByID: (NSString *)placeID
                   fields: (NSArray*)fields
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(searchNearby: (CLLocationDegrees)latitude
+                  longitude: (CLLocationDegrees)longitude
+                  radius: (CLLocationDistance)radius
+                  includedTypes: (NSArray)includedTypes
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 
 + (BOOL)requiresMainQueueSetup
 {
