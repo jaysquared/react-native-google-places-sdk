@@ -82,4 +82,52 @@ class GooglePlacesSdk: NSObject {
       resolve(parsedPlace)
     })
   }
+
+  @objc
+  func searchNearby(_ latitude: CLLocationDegrees, longitude: CLLocationDegrees, radius: CLLocationDistance, includedTypes:NSArray,  resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+    guard let client = self.client else {
+      reject("-1", NOT_INITIALIZED_MSG, NSError(domain: "", code: 0))
+      return
+    }
+    
+//    let circularLocationRestriction = GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(latitude, longitude), 500)
+    let circularLocationRestriction = GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(latitude, longitude), radius)
+
+
+// Specify the fields to return in the GMSPlace object for each place in the response.
+    let placeProperties = [GMSPlaceProperty.placeID, GMSPlaceProperty.addressComponents, GMSPlaceProperty.types, GMSPlaceProperty.name, GMSPlaceProperty.coordinate].map {$0.rawValue}
+
+// Create the GMSPlaceSearchNearbyRequest, specifying the search area and GMSPlace fields to return.
+    var request = GMSPlaceSearchNearbyRequest(locationRestriction: circularLocationRestriction, placeProperties: placeProperties)
+    //request.includedTypes = ["restaurant","cafe","art_gallery","museum","monument","sculpture", "cultural_landmark", "historical_place", "library", "school", "university", "amusement_park", "aquarium", "botanical_garden", ] 
+
+    let callback: GMSPlaceSearchNearbyResultCallback = { [weak self] results, error in
+      guard let results = results, error == nil else {
+        let errorCode = error?._code ?? 0
+        let errorMsg = error?.localizedDescription ?? "Unknown Error"
+        reject(String(errorCode), errorMsg, error)
+        return
+      }
+      guard let results = results as? [GMSPlace] else {
+        return
+      }
+      let places: NSMutableArray = []
+      for result in results {
+        
+        let dict: NSMutableDictionary = [
+          "placeID": result.placeID,
+          "name": result.name,
+          "coordinate": result.coordinate
+        ]
+                
+        places.add(dict)
+      }
+      resolve(places)
+    }
+    
+    client.searchNearby(
+      with: request,      
+      callback: callback
+    )
+  }
 }
