@@ -15,13 +15,13 @@ const LINKING_ERROR =
 const GooglePlacesSdk = NativeModules.GooglePlacesSdk
   ? NativeModules.GooglePlacesSdk
   : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+    {},
+    {
+      get() {
+        throw new Error(LINKING_ERROR);
+      },
+    }
+  );
 
 export function initialize(apiKey: string) {
   if (!apiKey) return;
@@ -44,4 +44,15 @@ export async function fetchPlaceByID(
   const place = await GooglePlacesSdk.fetchPlaceByID(placeID, fields);
 
   return place;
+}
+
+export async function searchNearby(
+  latitude: number,
+  longitude: number,
+  radius: number,
+  includedTypes: Array<string> = []
+): Promise<any> {
+  const places = await GooglePlacesSdk.searchNearby(latitude, longitude, radius, includedTypes);
+
+  return places;
 }
