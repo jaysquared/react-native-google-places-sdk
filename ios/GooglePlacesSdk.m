@@ -14,7 +14,7 @@ RCT_EXTERN_METHOD(fetchPlaceByID: (NSString *)placeID
 RCT_EXTERN_METHOD(searchNearby: (CLLocationDegrees)latitude
                   longitude: (CLLocationDegrees)longitude
                   radius: (CLLocationDistance)radius
-                  includedTypes: (NSArray)includedTypes
+                  includedTypes: (NSArray*)includedTypes
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
